@@ -1,16 +1,30 @@
 {
-  "name": "sawyer_special_api",
-  "version": "1.0.0",
-  "description": "My API assignment. Also i'm special",
-  "main": "index.js",
+  "name": "simple_http",
+  "version": "0.0.0",
+  "description": "A simple HTTP example using status codes.",
+  "main": "./src/server.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\"",
+    "nodemon": "nodemon -e js,html,css --watch ./src --watch ./hosted ./src/server.js",
+    "buildBundle": "webpack",
+    "watchBundle": "webpack watch",
+    "heroku-postbuild": "webpack --mode production",
+    "dev": "concurrently \"npm:watchBundle\" \"npm:nodemon\""
   },
-  "author": "Sawyer Nicastro",
+  "author": "Austin Willoughby",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.29.1",
     "nodemon": "^3.0.3",
-    "webpack": "^5.90.3"
+    "webpack": "^5.90.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "underscore": "^1.13.6"
   }
 }
