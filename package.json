@@ -1,0 +1,16 @@
+{
+  "name": "sawyer_special_api",
+  "version": "1.0.0",
+  "description": "My API assignment. Also i'm special",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sawyer Nicastro",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^3.0.3",
+    "webpack": "^5.90.3"
+  }
+}
