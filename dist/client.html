@@ -2,32 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Our simple HTTP server</title>
+  <title>Awkward Anonymous</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="/bundle.js"></script>
 </head>
 <body>
   <section id="top">
-    <h3>POST Status Code Tests</h3>
+    <h3>Incident Report</h3>
+    <p>This website allows you to anonymously report awkward moments that have happened to you, for other anonymous users to rate in awkwardness</p>
     <form id="nameForm" action="/addUser" method="post">
-      <label for="nameField">Name: </label>
-      <input id="nameField" type="text" name="name" />
-      <label for="age">Age: </label>
-      <input id="ageField" type="number" name="age" min="0" max="100" step="1"/>
-      <input type="submit" value="Add User" />
+      <label for="nameField">Incedent: </label>
+      <textarea id="nameField" name="name" rows="4" cols="50"></textarea>
     </form>
-    <form id="userForm" action="/getUsers" method="get">
-      <select id='urlField'>
-        <option value='/getUsers'>/getUsers</option>
-        <option value='/notReal'>/notReal</option>
-      </select>
-      <select id="methodSelect">
-        <option value="get">GET</option>
-        <option value="head">HEAD</option>
-      </select>
-      <input type="submit" value="Get User" />
-    </form>
+   
+      <input type="submit" value="Submit" />
   </section>
   <section id="content">
   </section>

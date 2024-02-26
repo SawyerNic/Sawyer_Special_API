@@ -15,6 +15,7 @@ const urlStruct = {
     '/success': jsonHandler.success,
     '/badRequest': jsonHandler.badRequest,
     '/notReal': jsonHandler.notFound,
+    '/favicon.ico': htmlHandler.getFavicon,
   },
   HEAD: {
     '/getUsers': jsonHandler.getUser,
@@ -59,7 +60,7 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
 
   if (request.method === 'GET') {
-    // GET method
+    console.log(parsedUrl.pathname);
     urlStruct.GET[parsedUrl.pathname](request, response, params);
   } else if (request.method === 'HEAD') {
     // HEAD method
@@ -68,10 +69,10 @@ const onRequest = (request, response) => {
     // POST method
     handlePost(request, response, parsedUrl);
   } else {
-    // not found
-    urlStruct.notFound(request, response, params);
+    urlStruct.notFound;
   }
 };
 
 http.createServer(onRequest).listen(port, () => {
+  console.log(`Listening on ${port}`);
 });
