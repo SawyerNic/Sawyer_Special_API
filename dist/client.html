@@ -11,14 +11,28 @@
   <section id="top">
     <h3>Incident Report</h3>
     <p>This website allows you to anonymously report awkward moments that have happened to you, for other anonymous users to rate in awkwardness</p>
-    <form id="nameForm" action="/addUser" method="post">
+    <form id="incedentForm" action="/addIncedent" method="post">
+      <label for="category">Category: 
+      <select id='category'>
+        <option value='family'>Family Gathering</option>
+        <option value='school'>At School</option>
+        <option value='work'>At Work</option>
+        <option value='public'>In Public</option>
+        <option value='friends'>With Friends</option>
+        <option value='romantic'>Romantic</option>
+        <option value='other'>Other</option>
+      </select>
+      </label>
       <label for="nameField">Incedent: </label>
       <textarea id="nameField" name="name" rows="4" cols="50"></textarea>
-    </form>
-   
       <input type="submit" value="Submit" />
+    </form>
+     
   </section>
+  <input type="submit" value="Rate Other Incedents" method="get"/>
   <section id="content">
   </section>
 </body>
+
+<img id="awk" src="./images/awkward-women.jpg" alt="awk"/>
 </html>

@@ -4,10 +4,10 @@ const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
-const port = process.env.PORT || process.env.NODE_PORT || 3000;
+const port = process.env.PORT || process.env.NODE_PORT || 4000;
 
 const urlStruct = {
-  GET: {
+
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
     '/getUsers': jsonHandler.getUser,
@@ -16,11 +16,11 @@ const urlStruct = {
     '/badRequest': jsonHandler.badRequest,
     '/notReal': jsonHandler.notFound,
     '/favicon.ico': htmlHandler.getFavicon,
-  },
-  HEAD: {
+    '/images/awkward-women.jpg': htmlHandler.getAwkImg,
     '/getUsers': jsonHandler.getUser,
     '/notReal': jsonHandler.notFound,
-  },
+    '/submit': jsonHandler.addUser,
+
   notFound: jsonHandler.notFound,
 };
 
@@ -59,20 +59,13 @@ const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
 
-  if (request.method === 'GET') {
-    console.log(parsedUrl.pathname);
-    urlStruct.GET[parsedUrl.pathname](request, response, params);
-  } else if (request.method === 'HEAD') {
-    // HEAD method
-    urlStruct.HEAD[parsedUrl.pathname](request, response, params);
-  } else if (request.method === 'POST') {
-    // POST method
-    handlePost(request, response, parsedUrl);
+  console.log(parsedUrl.pathname);
+
+  if (urlStruct[parsedUrl.pathname]) {
+    urlStruct[parsedUrl.pathname](request, response, params);
   } else {
-    urlStruct.notFound;
+    urlStruct.notFound(request, response);
   }
 };
 
-http.createServer(onRequest).listen(port, () => {
-  console.log(`Listening on ${port}`);
-});
+http.createServer(onRequest).listen(port);

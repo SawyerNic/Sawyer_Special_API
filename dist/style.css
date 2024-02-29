@@ -19,3 +19,13 @@ html, body {
     font-size: 2em;
     text-align: center;
   }
+
+  #awk {
+    float: left;
+  }
+
+  #incedentForm {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }

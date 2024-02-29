@@ -1,3 +1,5 @@
+
+
 //Handles our FETCH response. This function is async because it
 //contains an await.
 const handleResponse = async (response, parseResponse) => {
@@ -32,10 +34,6 @@ const handleResponse = async (response, parseResponse) => {
     if (parseResponse) {
         let obj = await response.json();
 
-        if (obj.message) {
-            console.log(obj);
-            content.innerHTML += `<p>Message: ${obj.message}</p>`;
-        }
 
         if (obj.userList) {
             // Object.values(obj.userList).map(user => {
@@ -94,17 +92,32 @@ const sendPost = async (nameForm) => {
     handleResponse(response);
 };
 
+//This function is used to make fetch requests. It is async because it
+//contains an await.
+//We will use this for the GET, HEAD and POST requests.
+const requestFetch = async (url, method, headers, body) => {
+    let response = await fetch(url, {
+        method: method,
+        headers: headers,
+        body: body,
+    });
+
+    return response;
+}
+
 //Init function is called when window.onload runs (set below).
 const init = () => {
+    
     //Grab the form
-    const nameForm = document.querySelector('#nameForm');
-    const userForm = document.querySelector('#userForm');
+    const incedentForm = document.querySelector('#incedentForm');
+    const categoryForm = document.querySelector('#category');
+
 
     //Create an addUser function that cancels the forms default action and
     //calls our sendPost function above.
     const addUser = (e) => {
         e.preventDefault();
-        sendPost(nameForm);
+        sendPost(null);
         return false;
     }
 
@@ -114,9 +127,14 @@ const init = () => {
         return false;
     }
 
+    const reportIncedent = (e) => {
+        e.preventDefault();
+        sendPost(null);
+        return false;
+    }
+
     //Call addUser when the submit event fires on the form.
-    nameForm.addEventListener('submit', addUser);
-    userForm.addEventListener('submit', getUser);
+    incedentForm.addEventListener('submit', addUser);    
 
 };
 
