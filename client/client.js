@@ -67,29 +67,20 @@ const sendGet = async (url) => {
 const sendPost = async (url) => {
     //Grab the form
 
+    //Create a new incedentData object
 
-    //Build a data string in the FORM-URLENCODED format.
-    let formData = `name=${nameField.value}&age=${ageField.value}`;
-    
-    //Make a fetch request and await a response. Set the method to
-    //the one provided by the form (POST). Set the headers. Content-Type
-    //is the type of data we are sending. Accept is the data we would like
-    //in response. Then add our FORM-URLENCODED string as the body of the request.
     let response = await fetch(nameAction, {
         method: nameMethod,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': 'application/json',
         },
-        body: formData,
+        body: incedentData,
     });
 
     //Once we have a response, handle it.
     handleResponse(response);
 };
-
-
-
 
 //This function is used to make fetch requests. It is async because it
 //contains an await.
@@ -106,7 +97,7 @@ const requestFetch = async (url, method, headers, body) => {
 
 //Init function is called when window.onload runs (set below).
 const init = () => {
-    
+
     //Grab the elements we need to use
     const titleField = document.querySelector('#title');                //Title
     const incedentBox = document.querySelector('#incedentField')        //Incedent
@@ -115,30 +106,48 @@ const init = () => {
     const ratePageButton = document.querySelector('#ratePage');         //Rate page button    
     const message = document.querySelector('#message');                 //Message
     const ratePage = document.querySelector('#ratePage');               //Rate page
-    
+
     //Function to n incedent when the button is clicked
     const addIncedent = (e) => {
         e.preventDefault();
 
         //If the fields are filled out, send the incedent to the server
-        if(incedentBox.value != "" && categoryForm.value != "none" &&
-        titleField.value != "") {
-            console.log(titleField.value + " " + incedentBox.value + " " + categoryForm.value);
+        if (incedentBox.value != "" &&
+            categoryForm.value != "none" &&
+            titleField.value != "") {
+
             ratePageButton.disabled = false;
-            
+
+            ratings = {
+                Chilling: 0,
+                Recoverable: 0,
+                Unpleasant: 0,
+                Unrecoverable: 0,
+                Dissapear_Forever: 0
+            }
+            const incidentData = {
+                title: titleField.value,
+                category: categoryForm.value,
+                incedent: incedentBox.value,
+                scores: ratings
+            };
         }
         else {
             message.innerHTML = "Please fill out all fields";
             console.log("Please fill out all fields");
         }
-        
+
 
         return false;
     }
 
     //Call addUser when the submit event fires on the form.
-    submitButton.addEventListener('click', addIncedent);    
-    ratePageButton.addEventListener('click', () => sendGet('/thankYou'));
+    if (submitButton) {
+        submitButton.addEventListener('click', addIncedent);
+    }
+    if (ratePageButton) {
+        ratePageButton.addEventListener('click', () => sendGet('/thankYou'));
+    }
 
 };
 
