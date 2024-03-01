@@ -20,8 +20,8 @@ const urlStruct = {
     '/getUsers': jsonHandler.getUser,
     '/notReal': jsonHandler.notFound,
     '/submit': jsonHandler.addUser,
-
-  notFound: jsonHandler.notFound,
+    '/thankYou': htmlHandler.getThankYou,
+    notFound: jsonHandler.notFound,
 };
 
 const parseBody = (request, response, handler) => {

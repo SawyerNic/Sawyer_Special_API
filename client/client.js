@@ -46,35 +46,31 @@ const handleResponse = async (response, parseResponse) => {
 
 };
 
-const sendGet = async (userForm) => {
-    const action = document.querySelector('#urlField').value;
-    const nameMethod = document.querySelector('#methodSelect').value.toUpperCase();
+const sendGet = async (url) => {
 
-    let response = await fetch(action, {
-        method: nameMethod,
+    console.log(url);
+    let response = await fetch(url, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
     })
 
-    handleResponse(response, nameMethod === 'GET');
+    handleResponse(response);
+    window.location.href = response.url;
 
 }
 
 //Uses fetch to send a postRequest. Marksed as async because we use await
 //within it.
-const sendPost = async (nameForm) => {
-    //Grab all the info from the form
-    const nameAction = nameForm.getAttribute('action');
-    const nameMethod = nameForm.getAttribute('method');
+const sendPost = async (url) => {
+    //Grab the form
 
-    const nameField = nameForm.querySelector('#nameField');
-    const ageField = nameForm.querySelector('#ageField');
 
     //Build a data string in the FORM-URLENCODED format.
-    const formData = `name=${nameField.value}&age=${ageField.value}`;
-
+    let formData = `name=${nameField.value}&age=${ageField.value}`;
+    
     //Make a fetch request and await a response. Set the method to
     //the one provided by the form (POST). Set the headers. Content-Type
     //is the type of data we are sending. Accept is the data we would like
@@ -92,6 +88,9 @@ const sendPost = async (nameForm) => {
     handleResponse(response);
 };
 
+
+
+
 //This function is used to make fetch requests. It is async because it
 //contains an await.
 //We will use this for the GET, HEAD and POST requests.
@@ -108,33 +107,38 @@ const requestFetch = async (url, method, headers, body) => {
 //Init function is called when window.onload runs (set below).
 const init = () => {
     
-    //Grab the form
-    const incedentForm = document.querySelector('#incedentForm');
-    const categoryForm = document.querySelector('#category');
-
-
-    //Create an addUser function that cancels the forms default action and
-    //calls our sendPost function above.
-    const addUser = (e) => {
+    //Grab the elements we need to use
+    const titleField = document.querySelector('#title');                //Title
+    const incedentBox = document.querySelector('#incedentField')        //Incedent
+    const categoryForm = document.querySelector('#category');           //Category
+    const submitButton = document.querySelector('#submitButton');       //Submit button
+    const ratePageButton = document.querySelector('#ratePage');         //Rate page button    
+    const message = document.querySelector('#message');                 //Message
+    const ratePage = document.querySelector('#ratePage');               //Rate page
+    
+    //Function to n incedent when the button is clicked
+    const addIncedent = (e) => {
         e.preventDefault();
-        sendPost(null);
-        return false;
-    }
 
-    const getUser = (e) => {
-        e.preventDefault();
-        sendGet(userForm);
-        return false;
-    }
+        //If the fields are filled out, send the incedent to the server
+        if(incedentBox.value != "" && categoryForm.value != "none" &&
+        titleField.value != "") {
+            console.log(titleField.value + " " + incedentBox.value + " " + categoryForm.value);
+            ratePageButton.disabled = false;
+            
+        }
+        else {
+            message.innerHTML = "Please fill out all fields";
+            console.log("Please fill out all fields");
+        }
+        
 
-    const reportIncedent = (e) => {
-        e.preventDefault();
-        sendPost(null);
         return false;
     }
 
     //Call addUser when the submit event fires on the form.
-    incedentForm.addEventListener('submit', addUser);    
+    submitButton.addEventListener('click', addIncedent);    
+    ratePageButton.addEventListener('click', () => sendGet('/thankYou'));
 
 };
 
