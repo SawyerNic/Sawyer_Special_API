@@ -3,11 +3,14 @@ const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
+const firebase = require('./firebase.js');
 
-const port = process.env.PORT || process.env.NODE_PORT || 3000;
+
+
+const port = process.env.PORT || process.env.NODE_PORT || 4000;
 
 const urlStruct = {
-  GET: {
+
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
     '/getUsers': jsonHandler.getUser,
@@ -15,12 +18,13 @@ const urlStruct = {
     '/success': jsonHandler.success,
     '/badRequest': jsonHandler.badRequest,
     '/notReal': jsonHandler.notFound,
-  },
-  HEAD: {
+    '/favicon.ico': htmlHandler.getFavicon,
+    '/images/awkward-women.jpg': htmlHandler.getAwkImg,
     '/getUsers': jsonHandler.getUser,
     '/notReal': jsonHandler.notFound,
-  },
-  notFound: jsonHandler.notFound,
+    '/submit': jsonHandler.addIncedent,
+    '/thankYou': htmlHandler.getThankYou,
+    notFound: jsonHandler.notFound,
 };
 
 const parseBody = (request, response, handler) => {
@@ -37,9 +41,9 @@ const parseBody = (request, response, handler) => {
   });
 
   request.on('end', () => {
+
     const bodyString = Buffer.concat(body).toString();
     const bodyParams = query.parse(bodyString);
-
     handler(request, response, bodyParams);
   });
 };
@@ -47,10 +51,10 @@ const parseBody = (request, response, handler) => {
 // handle POST requests
 const handlePost = (request, response, parsedUrl) => {
   // If they go to /addUser
-  if (parsedUrl.pathname === '/addUser') {
+  if (parsedUrl.pathname === '/submit') {
     // Call our below parseBody handler, and in turn pass in the
     // jsonHandler.addUser function as the handler callback function.
-    parseBody(request, response, jsonHandler.addUser);
+    parseBody(request, response, jsonHandler.addIncedent);
   }
 };
 
@@ -58,20 +62,18 @@ const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
 
-  if (request.method === 'GET') {
-    // GET method
-    urlStruct.GET[parsedUrl.pathname](request, response, params);
-  } else if (request.method === 'HEAD') {
-    // HEAD method
-    urlStruct.HEAD[parsedUrl.pathname](request, response, params);
-  } else if (request.method === 'POST') {
-    // POST method
+  firebase.checkWorking();
+
+  console.log(parsedUrl.pathname);
+
+  if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
+  }
+  else if (urlStruct[parsedUrl.pathname]) {
+    urlStruct[parsedUrl.pathname](request, response, params);
   } else {
-    // not found
-    urlStruct.notFound(request, response, params);
+    urlStruct.notFound(request, response);
   }
 };
 
-http.createServer(onRequest).listen(port, () => {
-});
+http.createServer(onRequest).listen(port);

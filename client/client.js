@@ -1,3 +1,5 @@
+
+
 //Handles our FETCH response. This function is async because it
 //contains an await.
 const handleResponse = async (response, parseResponse) => {
@@ -32,10 +34,6 @@ const handleResponse = async (response, parseResponse) => {
     if (parseResponse) {
         let obj = await response.json();
 
-        if (obj.message) {
-            console.log(obj);
-            content.innerHTML += `<p>Message: ${obj.message}</p>`;
-        }
 
         if (obj.userList) {
             // Object.values(obj.userList).map(user => {
@@ -48,75 +46,110 @@ const handleResponse = async (response, parseResponse) => {
 
 };
 
-const sendGet = async (userForm) => {
-    const action = document.querySelector('#urlField').value;
-    const nameMethod = document.querySelector('#methodSelect').value.toUpperCase();
+const sendGet = async (url) => {
 
-    let response = await fetch(action, {
-        method: nameMethod,
+    console.log(url);
+    let response = await fetch(url, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }
     })
 
-    handleResponse(response, nameMethod === 'GET');
+    handleResponse(response);
+    window.location.href = response.url;
 
 }
 
 //Uses fetch to send a postRequest. Marksed as async because we use await
 //within it.
-const sendPost = async (nameForm) => {
-    //Grab all the info from the form
-    const nameAction = nameForm.getAttribute('action');
-    const nameMethod = nameForm.getAttribute('method');
+const sendPost = async (url, incedentData) => {
+    //Grab the form
 
-    const nameField = nameForm.querySelector('#nameField');
-    const ageField = nameForm.querySelector('#ageField');
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }
 
-    //Build a data string in the FORM-URLENCODED format.
-    const formData = `name=${nameField.value}&age=${ageField.value}`;
-
-    //Make a fetch request and await a response. Set the method to
-    //the one provided by the form (POST). Set the headers. Content-Type
-    //is the type of data we are sending. Accept is the data we would like
-    //in response. Then add our FORM-URLENCODED string as the body of the request.
-    let response = await fetch(nameAction, {
-        method: nameMethod,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json',
-        },
-        body: formData,
-    });
+    //Create a new incedentData object
+    let response = requestFetch(url, 'POST', headers, incedentData);
 
     //Once we have a response, handle it.
     handleResponse(response);
 };
 
+//This function is used to make fetch requests. It is async because it
+//contains an await.
+//We will use this for the GET, HEAD and POST requests.
+const requestFetch = async (url, method, headers, body) => {
+    console.log(body);
+    body = JSON.stringify(body);
+    let response = await fetch(url, {
+        method: method,
+        headers: headers,
+        body: body,
+    });
+
+    return response;
+}
+
 //Init function is called when window.onload runs (set below).
 const init = () => {
-    //Grab the form
-    const nameForm = document.querySelector('#nameForm');
-    const userForm = document.querySelector('#userForm');
 
-    //Create an addUser function that cancels the forms default action and
-    //calls our sendPost function above.
-    const addUser = (e) => {
-        e.preventDefault();
-        sendPost(nameForm);
-        return false;
-    }
+    //Grab the elements we need to use
+    const titleField = document.querySelector('#title');                //Title
+    const incedentBox = document.querySelector('#incedentField')        //Incedent
+    const categoryForm = document.querySelector('#category');           //Category
+    const submitButton = document.querySelector('#submitButton');       //Submit button
+    const ratePageButton = document.querySelector('#ratePage');         //Rate page button    
+    const message = document.querySelector('#message');                 //Message
+    const ratePage = document.querySelector('#ratePage');               //Rate page
 
-    const getUser = (e) => {
+    //Function to n incedent when the button is clicked
+    const addIncedent = (e) => {
         e.preventDefault();
-        sendGet(userForm);
+
+        //If the fields are filled out, send the incedent to the server
+        if (incedentBox.value != "" &&
+            categoryForm.value != "none" &&
+            titleField.value != "") {
+
+            ratePageButton.disabled = false;
+
+            const ratings = {
+                Chilling: 0,
+                Recoverable: 0,
+                Unpleasant: 0,
+                Unrecoverable: 0,
+                Dissapear_Forever: 0
+            };
+
+            const incidentData = {
+                title: titleField.value,
+                category: categoryForm.value,
+                incedent: incedentBox.value,
+                scores: ratings
+            };
+
+            sendPost('/submit', incidentData);
+        }
+        else {
+            message.innerHTML = "Please fill out all fields";
+            console.log("Please fill out all fields");
+        }
+
+
         return false;
     }
 
     //Call addUser when the submit event fires on the form.
-    nameForm.addEventListener('submit', addUser);
-    userForm.addEventListener('submit', getUser);
+    if (submitButton) {
+        submitButton.addEventListener('click', addIncedent);
+    }
+    if (ratePageButton) {
+        ratePageButton.addEventListener('click', () => sendGet('/thankYou'));
+    }
 
 };
 
