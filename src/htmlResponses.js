@@ -7,7 +7,7 @@ const css = fs.readFileSync(`${__dirname}/../dist/style.css`);
 const bundle = fs.readFileSync(`${__dirname}/../dist/bundle.js`);
 const favicon = fs.readFileSync(`${__dirname}/../dist/images/favicon.png`);
 const awkImg = fs.readFileSync(`${__dirname}/../dist/images/awkward-women.jpg`);
-const thankYou = fs.readFileSync(`${__dirname}/../dist/thankyou.html`);
+const feedPage = fs.readFileSync(`${__dirname}/../dist/feedPage.html`);
 
 
 // A simple helper function for serving up static files
@@ -22,8 +22,9 @@ const getIndex = (request, response) => {
   serveFile(response, index, 'text/html');
 };
 
-const getThankYou = (request, response) => {
-  serveFile(response, thankYou, 'text/html');
+const getFeedPage = (request, response) => {
+
+  serveFile(response, feedPage, 'text/html');
 };
 
 // Serve the style.css page
@@ -51,5 +52,5 @@ module.exports = {
   getBundle,
   getFavicon,
   getAwkImg,
-  getThankYou,
+  getFeedPage,
 };

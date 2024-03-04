@@ -1,0 +1,33 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AA - Feed</title>
+    <script src="/bundle.js"></script>
+</head>
+
+<body>
+    <section>
+        <h1>Awkward Anonymous</h1>
+        <label>Show Category: </label>
+        <select id='category'>
+            <option value="none">Select a Category</option>
+            <option value='family'>Family Gathering</option>
+            <option value='school'>At School</option>
+            <option value='work'>At Work</option>
+            <option value='public'>In Public</option>
+            <option value='friends'>With Friends</option>
+            <option value='romantic'>Romantic</option>
+            <option value='other'>Other</option>
+        </select>
+        <select id="method">
+            <option value="GET">GET</option>
+            <option value="HEAD">HEAD</option>
+        </select>
+        <button type="button" id="getIncedents">Get Incedents</button>
+    </section>
+    <section id="results"></section>
+</body>
+
+</html>

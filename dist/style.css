@@ -29,3 +29,9 @@ html, body {
     display: flex;
     flex-direction: column;
   }
+
+  .post {
+    border-bottom: 1px solid #000; /* Change color as needed */
+    padding-bottom: 10px; /* Add some space below the content and the line */
+    margin-bottom: 10px; /* Add some space below the line */
+}

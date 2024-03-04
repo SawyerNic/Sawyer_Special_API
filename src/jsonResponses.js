@@ -1,7 +1,8 @@
 /* There is no new code in this file that is unique to this demo.
    This code is directly taken from the "Status Code" example.
 */
-const Users = {};
+
+const firebase = require('./firebase.js');
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
@@ -18,6 +19,7 @@ const success = (request, response) => {
   const responseJSON = {
     message: 'This is a successful response!',
   };
+
 
   respondJSON(request, response, 200, responseJSON);
 };
@@ -45,32 +47,50 @@ const notFound = (request, response) => {
   respondJSON(request, response, 404, responseJSON);
 };
 
-const addUser = (request, response, bodyParams) => {
-  if (bodyParams.name === '' || bodyParams.age === '') {
-    return badRequest(request, response, bodyParams);
-  }
+const addIncedent = (request, response, body) => {
 
-  Users[bodyParams.name] = {
-    name: bodyParams.name,
-    age: bodyParams.age,
-  };
+  let incedent = JSON.parse(JSON.stringify(body));
+  
+  firebase.writePost(`Posts/${incedent.title}`, incedent);
 
   const responseJSON = {
     message: 'Created Successfully',
-    id: 'addUser',
+    id: 'addedIncedent',
+    added: incedent
   };
+
   return respondJSON(request, response, 201, responseJSON);
 };
 
 // /getUsers with GET retrieves 200 success with results, and HEAD retrieves without results
-const getUser = (request, response) => {
-  if (request.method === 'HEAD') {
-    return respondHead(request, response, 200);
+const getIncidents = async (request, response, params) => {
+
+  let incidentsObj = {};
+
+  incidentsObj = await firebase.getPosts();
+
+  console.log(params.category);
+  const filteredObjects = {};
+
+  if(params.category != 'none'){
+    for (const key in incidentsObj) {
+      if (incidentsObj[key].category === params.category) {
+          filteredObjects[key] = incidentsObj[key];
+      }
   }
+    incidentsObj = filteredObjects;
+  }
+  
 
   const responseJSON = {
-    userList: Users,
+    message: 'Incidents retrieved successfully',
+    value: "Incidents",
+    incidents: incidentsObj,
   };
+
+  if(request.method === 'HEAD'){
+    return respondHead(request, response, 200);
+  }
   return respondJSON(request, response, 200, responseJSON);
 };
 
@@ -78,6 +98,6 @@ module.exports = {
   success,
   badRequest,
   notFound,
-  addUser,
-  getUser,
+  addIncedent,
+  getIncidents,
 };

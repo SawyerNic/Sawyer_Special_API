@@ -4,23 +4,24 @@ const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
+
+
+
 const port = process.env.PORT || process.env.NODE_PORT || 4000;
 
 const urlStruct = {
 
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
-    '/getUsers': jsonHandler.getUser,
     '/bundle.js': htmlHandler.getBundle,
     '/success': jsonHandler.success,
     '/badRequest': jsonHandler.badRequest,
-    '/notReal': jsonHandler.notFound,
     '/favicon.ico': htmlHandler.getFavicon,
     '/images/awkward-women.jpg': htmlHandler.getAwkImg,
-    '/getUsers': jsonHandler.getUser,
+    '/submit': jsonHandler.addIncedent,
+    '/getIncidents': jsonHandler.getIncidents,
     '/notReal': jsonHandler.notFound,
-    '/submit': jsonHandler.addUser,
-    '/thankYou': htmlHandler.getThankYou,
+    '/feed': htmlHandler.getFeedPage,
     notFound: jsonHandler.notFound,
 };
 
@@ -39,29 +40,33 @@ const parseBody = (request, response, handler) => {
 
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
-    const bodyParams = query.parse(bodyString);
-
+    let bodyParams;
+    try {
+      bodyParams = JSON.parse(bodyString);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      response.statusCode = 400;
+      return response.end();
+    }
     handler(request, response, bodyParams);
   });
 };
 
 // handle POST requests
 const handlePost = (request, response, parsedUrl) => {
-  // If they go to /addUser
-  if (parsedUrl.pathname === '/addUser') {
-    // Call our below parseBody handler, and in turn pass in the
-    // jsonHandler.addUser function as the handler callback function.
-    parseBody(request, response, jsonHandler.addUser);
-  }
+  console.log(parsedUrl.pathname);
+
+  parseBody(request, response, urlStruct[parsedUrl.pathname]);
 };
 
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
 
-  console.log(parsedUrl.pathname);
-
-  if (urlStruct[parsedUrl.pathname]) {
+  if (request.method === 'POST') {
+    handlePost(request, response, parsedUrl);
+  }
+  else if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, params);
   } else {
     urlStruct.notFound(request, response);
