@@ -4,26 +4,29 @@
 
 const firebase = require('./firebase.js');
 
+// Function to respond with JSON data
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
   response.end();
 };
 
+// Function to respond with a header only
 const respondHead = (request, response, status) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
   response.end();
 };
 
+// Function to handle a successful response
 const success = (request, response) => {
   const responseJSON = {
     message: 'This is a successful response!',
   };
 
-
   respondJSON(request, response, 200, responseJSON);
 };
 
+// Function to handle a bad request
 const badRequest = (request, response, params) => {
   const responseJSON = {
     message: 'This request has the required parameters',
@@ -38,6 +41,7 @@ const badRequest = (request, response, params) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+// Function to handle a not found response
 const notFound = (request, response) => {
   const responseJSON = {
     message: 'The page you are looking for was not found.',
@@ -47,8 +51,8 @@ const notFound = (request, response) => {
   respondJSON(request, response, 404, responseJSON);
 };
 
+// Function to add an incident
 const addIncedent = (request, response, body) => {
-
   let incedent = JSON.parse(JSON.stringify(body));
   
   firebase.writePost(`Posts/${incedent.title}`, incedent);
@@ -62,11 +66,9 @@ const addIncedent = (request, response, body) => {
   return respondJSON(request, response, 201, responseJSON);
 };
 
-// /getUsers with GET retrieves 200 success with results, and HEAD retrieves without results
+// Function to get incidents
 const getIncidents = async (request, response, params) => {
-
   let incidentsObj = {};
-
   incidentsObj = await firebase.getPosts();
 
   console.log(params.category);
@@ -77,10 +79,9 @@ const getIncidents = async (request, response, params) => {
       if (incidentsObj[key].category === params.category) {
           filteredObjects[key] = incidentsObj[key];
       }
-  }
+    }
     incidentsObj = filteredObjects;
   }
-  
 
   const responseJSON = {
     message: 'Incidents retrieved successfully',
@@ -91,6 +92,7 @@ const getIncidents = async (request, response, params) => {
   if(request.method === 'HEAD'){
     return respondHead(request, response, 200);
   }
+  
   return respondJSON(request, response, 200, responseJSON);
 };
 

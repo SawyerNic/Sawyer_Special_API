@@ -4,13 +4,11 @@ const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
-
-
-
+// Define the port to listen on
 const port = process.env.PORT || process.env.NODE_PORT || 4000;
 
+// Define the URL structure with corresponding handlers
 const urlStruct = {
-
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
     '/bundle.js': htmlHandler.getBundle,
@@ -25,6 +23,7 @@ const urlStruct = {
     notFound: jsonHandler.notFound,
 };
 
+// Function to parse the request body for POST requests
 const parseBody = (request, response, handler) => {
   const body = [];
 
@@ -52,13 +51,14 @@ const parseBody = (request, response, handler) => {
   });
 };
 
-// handle POST requests
+// Function to handle POST requests
 const handlePost = (request, response, parsedUrl) => {
   console.log(parsedUrl.pathname);
 
   parseBody(request, response, urlStruct[parsedUrl.pathname]);
 };
 
+// Request handler function
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
   const params = query.parse(parsedUrl.query);
@@ -73,4 +73,5 @@ const onRequest = (request, response) => {
   }
 };
 
+// Create an HTTP server and listen on the defined port
 http.createServer(onRequest).listen(port);
